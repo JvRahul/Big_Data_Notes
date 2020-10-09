@@ -42,26 +42,30 @@ Working of Hive:
 	submit job to MapReduce ()
   
   
- ####################
- Interview Questions
- ####################
+ ##############################
+ Advanced Interview Questions
+ ##############################
  
  1) How to manage multiple hive batch jobs:
   
-  Yarn queue mapping..
+	Yarn queue mapping..
+	Configure a queue for batch processing
+	You can configure the capacity scheduler queues to scale a Hive batch job for your environment. YARN uses the queues to allocate Hadoop cluster resources among users and groups.
 
-  Configure a queue for batch processing
-
-  You can configure the capacity scheduler queues to scale a Hive batch job for your environment. YARN uses the queues to allocate Hadoop cluster resources among users and groups.
-
- 2) What is partitionBy and ClusterBy in hive:
+ 2) What is managed table and external table in hive:
  
+	Managed tables are Hive owned tables where the entire lifecycle of the tables’ data are managed and controlled by Hive. External tables are tables where Hive has loose coupling with the data.
+	All the write operations to the Managed tables are performed using Hive SQL commands. If a Managed table or partition is dropped, the data and metadata associated with that table or partition are deleted. The transactional semantics (ACID) are also supported only on Managed tables.
+	The writes on External tables can be performed using Hive SQL commands but data files can also be accessed and managed by processes outside of Hive. If an External table or partition is dropped, only the metadata associated with the table or partition is deleted but the underlying data files stay intact. A typical example for External table is to run analytical queries on HBase or Druid owned data via Hive, where data files are written by HBase or Druid and Hive reads them for analytics.
+	Hive supports replication of External tables with data to target cluster and it retains all the properties of External tables.
+	The data files permission and ownership are preserved so that the relevant external processes can continue to write in it even after failover. 
+
  
- 3) What is managed table and external table in hive: 
+ 3) What is partitionBy and ClusterBy in hive:
  
  4) How can you change the execution engine of hive:
  
-   By setting the property hive.execution.engine = 'Tez' during the local session or setting it up globally we can set our required execution engine.
+ 	By setting the property hive.execution.engine = 'Tez' during the local session or setting it up globally we can set our required execution engine.
  
  
  
