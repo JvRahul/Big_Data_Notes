@@ -1,0 +1,96 @@
+################
+UDFs in PySpark
+################
+
+------Python UDFs in Pyspark------:
+
+Python UDFs in Spark are slow in execution and lead to performance degradation due to the cost of serializing the data to Python and launching of the python process in each individual executor node.
+
+When Spark UDF is created in Python, 4 steps are performed, 
+
+	1. Function is serialized and sent to the workers 
+	2. Spark starts an individual python process in the worker node and data is sent to Python. 
+	3. The execution is performed row by row. 
+	4. Once the computations are performed in Python, the result is sent back to Spark.
+	
+The cost of starting a python process in the worker node and serialization of data is quite expensive. Also, Python can consume additional memory causing the worker/executor to fail due to a resource crunch.
+
+
+------Scala UDF in PySpark-------:
+
+Python UDFs in Spark are slow in execution and lead to performance degradation
+
+So, an alternate solution is to write a Scala UDF and call the same from Pyspark. A benchmarking between a Pyspark UDF and a Scala UDF is also demonstrated in the coming sections.
+
+Here, the UDF1 class is imported because we are passing a single argument to the UDF. So, if the UDF is supposed to take 2 arguments, then UDF2 must be imported, similarly for 3 arguments, UDF3 and so on.
+
+Package the code into a JAR using a build tool like sbt
+
+//---- Scala udf code ----//
+package com.custom.scala.udf
+
+import org.apache.spark.sql.api.java.{UDF1, UDF2}
+
+// UDF to check if the number is odd or even
+class OddOrEven extends UDF1[Long, String] {
+
+  override def call(x: Long): String = {
+    if (x % 2 == 0) "even" else "odd"
+  }
+}
+
+
+// UDF to compute the product of 2 numbers
+class IntProduct extends UDF2[Long, Long, Long] {
+
+  override def call(a: Long, b: Long): Long = {
+    return a * b
+  }
+}
+
+
+Registering Scala UDF in Pyspark
+
+To register a Scala UDF in Pyspark, follow the below mentioned steps,
+
+Step 1: Add JAR to the Spark Session
+
+Note: If the Spark job is running in cluster mode, then the JAR must be placed either in the local file system of all the nodes or in a distributed file system where all nodes have access to.
+
+spark.sql("add jar /<path-to-jar>/scala_udf.jar")
+
+DataFrame[result: int]
+
+Step 2: Register the function as a Java Function in PySpark using the spark.udf.registerJavaFunction method.
+
+from pyspark.sql.types import LongType, StringType
+
+spark.udf.registerJavaFunction("int_product", "com.custom.scala.udf.IntProduct", returnType=LongType())
+spark.udf.registerJavaFunction("odd_or_even", "com.custom.scala.udf.OddOrEven", returnType=StringType())
+
+from pyspark.sql.functions import expr
+
+df = spark.createDataFrame([[2, 3], [7, 4], [23, 18], [40, 26], [27, 98], [20, None]], ['a', 'b'])
+
+df.select('a', 'b', expr("int_product(a, b)").alias('product'), expr("odd_or_even(a)")).show()
+
++---+----+-------+------------------+
+|  a|   b|product|UDF:odd_or_even(a)|
++---+----+-------+------------------+
+|  2|   3|      6|              even|
+|  7|   4|     28|               odd|
+| 23|  18|    414|               odd|
+| 40|  26|   1040|              even|
+| 27|  98|   2646|               odd|
+| 20|null|      0|              even|
++---+----+-------+------------------+
+
+Since there is no conversion to/from Python involved here, scala udf yields a significant speed up over a python udf in pyspark.
+
+Below is the physical plan of the above execution,
+
+df.select('a', 'b', expr("int_product(a, b)").alias('product'), expr("odd_or_even(a)")).explain()
+
+== Physical Plan ==
+*(1) Project [a#586L, b#587L, UDF:int_product(a#586L, b#587L) AS product#610L, UDF:odd_or_even(a#586L) AS UDF:odd_or_even(a)#611]
++- Scan ExistingRDD[a#586L,b#587L]
