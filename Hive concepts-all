@@ -70,9 +70,73 @@ Working of Hive:
 	The data files permission and ownership are preserved so that the relevant external processes can continue to write in it even after failover. 
 
  
- 3) What is partitionBy and ClusterBy in hive:
+ 3) What are Hive Partitions & Buckets:
  
- 4) How can you change the execution engine of hive:
+ 	Partitions:Hive Partitions is a way to organizes tables into partitions by dividing tables into different parts based on partition keys.
+		   Partition is helpful when the table has one or more Partition keys (columns).
+		   Partition keys are basic elements for determining how the data is stored in the table. 
+		   
+		   Creation of partition table:
+		   	create table state_part(District string,Enrolments string) PARTITIONED BY(state string);
+		   
+		   For partition we have to set this property:
+		   	set hive.exec.dynamic.partition.mode=nonstrict
+
+		   If we take state column as partition key and perform partitions on that India data as a whole, 
+		   we can able to get Number of partitions (38 partitions) which is equal to number of states (38) present in India.
+		   Such that each state data can be viewed separately in partitions tables. 
+ 	
+	Buckets: Buckets in hive is used in segregating of hive table-data into multiple files or directories. it is used for efficient querying.
+		 The data i.e. present in that partitions can be divided further into Buckets.
+		 The division is performed based on Hash of particular columns that we selected in the table.
+		 Buckets use some form of Hashing algorithm at back end to read each record and place it into buckets
+		 In Hive, we have to enable buckets by using the set.hive.enforce.bucketing=true;
+		 
+		 hive> create table samlpe_tableame {first_name string,
+		 				     job_id	int,
+						     department string,
+						     salary 	string,
+						     country	string }
+					clustered by (country) into 4 buckets
+					row format delimited
+					fields terminated by ',';
+					
+			    We are creating sample_bucket with column names such as first_name, job_id, department, salary and country.
+			    We are creating 4 buckets overhere.
+			    Once the data gets loaded, it automatically places the data into 4 buckets.
+		 
+		 hadoop-2.2.0/bin$ ./hadoop fs -ls /user/hive
+		 --rwx----            /user/hive/sampledb/sample_tablename/000000_0
+		 --rwx----            /user/hive/sampledb/sample_tablename/000000_1
+		 --rwx----            /user/hive/sampledb/sample_tablename/000000_2
+		 --rwx----            /user/hive/sampledb/sample_tablename/000000_3
+			
+		# as seen above data is transferred in to 4 buckets _0, _1, _2, _3
+ 
+ 4) What is Sortby, DistributeBy. ClusterBy in hive:
+ 	
+	SortBy: Sort by clause performs on column names of Hive tables to sort the output.
+		We can mention DESC for sorting the order in descending order and mention ASC for Ascending order of the sort.
+		In this sort by it will sort the rows before feeding to the reducer. Always sort by depends on column types.
+		For instance, if column types are numeric it will sort in numeric order if the columns types are string it will sort in lexicographical order. 
+		
+	DistributeBy: Distribute BY clause used on tables present in Hive. Hive uses the columns in Distribute by to distribute the rows among reducers. 
+		All Distribute BY columns will go to the same reducer.
+		It ensures each of N reducers gets non-overlapping ranges of column.
+		It doesn't sort the output of each reducer
+		
+	ClusterBy: Cluster By used as an alternative for both Distribute BY and Sort BY clauses in Hive-QL.
+		Cluster BY clause used on tables present in Hive. Hive uses the columns in Cluster by to distribute the rows among reducers. 
+		Cluster BY columns will go to the multiple reducers.
+		It ensures sorting orders of values present in multiple reducers.
+		For example, Cluster By clause mentioned on the Id column name of the table employees_guru table.
+		The output when executing this query will give results to multiple reducers at the back end. 
+		But as front end it is an alternative clause for both Sort By and Distribute By.
+		This is actually back end process when we perform a query with sort by, group by, and cluster by in terms of Map reduce framework.
+		So if we want to store results into multiple reducers, we go with Cluster By. 
+
+
+ 5) How can you change the execution engine of hive:
  
  	By setting the property hive.execution.engine = 'Tez' during the local session or setting it up globally we can set our required execution engine.
  
