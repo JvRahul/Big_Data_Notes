@@ -1,0 +1,38 @@
+#hive :
+describe tablename
+describe formatted tablename
+
+sqlContext.setConf("spark.sql.shuffle.partitions", "100")
+
+##############################################
+PySpark - Read & Write files from Hive
+##############################################
+
+from pyspark import SparkContext, SparkConf
+from pyspark.sql import SparkSession, HiveContext
+
+//--- Set Hive metastore uri ---
+
+sparkSession = (SparkSession
+ .builder
+ .appName('example-pyspark-read-and-write-from-hive')
+ .enableHiveSupport()                                     // important parameter to access hive tables
+ .getOrCreate())
+ 
+data = [('First', 1), ('Second', 2), ('Third', 3), ('Fourth', 4), ('Fifth', 5)]
+df = sparkSession.createDataFrame(data)
+
+# Creating Spark Session
+sparkSession = SparkSession.builder.appName("example-pyspark-read-and-write").getOrCreate()
+
+# How to write a table into Hive?
+# Write into Hive
+
+df.write.saveAsTable('example')
+// (or) df.write.format("ORC").saveAsTable("db_bdp.textData")
+
+# How to read a table from Hive?
+# This Code only shows the first 20 records of the file.
+# Read from Hive
+df_load = sparkSession.sql('SELECT * FROM example')
+df_load.show()
