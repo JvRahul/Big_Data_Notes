@@ -1,0 +1,42 @@
+####################
+PySpark Serializer
+####################
+
+PySpark Serialization is used to perform tuning on Apache Spark. PySpark supports custom serializers for transferring data. All data which is transferred over the network to write to disk or that remains in memory must be serialized. ... Serialization plays a vital role in performing a complex operation.
+
+The PySpark supports the following two types of serialization.
+
+    1. MarshelSerializer
+    2. PickleSerializer
+
+
+1. MarshalSerializer
+
+MarshalSerializer is used to serialize objects by using PySpark. It is faster than the PickleSerializer, but it supports few datatypes only. The serializer must be chosen at the time of creating SparkContext.
+
+class MarshalSerializer(FramedSerializer):  
+     """  
+     http://docs.python.org/2/library/marshal.html  
+     """  
+    dumps = marshal.dumps  
+    loads = marshal.loads 
+
+from pyspark.context import SparkContext  
+from pyspark.serializers import MarshalSerializer  
+sc = SparkContext('local', 'test', serializer=MarshalSerializer())  
+sc.parallelize(list(range(1000))).map(lambda x:  3 * x).take(10)  
+sc.stop()
+
+cannot support - recursive lists, sets and dictionaries should not be written (they will cause infinite loops).
+
+2. PickleSerializer
+
+PickelSerializer is used to serialize objects. It supports nearly any Python Object, although it is not fast as specialized serializers. Consider the following code:
+
+    class PickleSerializer(FramedSerializer):  
+         """  
+             http://docs.python.org/2/library/pickle.html  
+         """  
+        def dumps(self, obj):  
+             return cPickle.dumps(obj, 2)  
+         loads = cPickle.loads  
