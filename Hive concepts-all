@@ -22,8 +22,11 @@ Hive Architecture
 
 - Hive Clients
 
-- Hive services - Hiveserver2, beeline, Hive Driver(receives hql, creates session handles for the query and sends to compiler), Hive Compiler (comiles, typecheks, parses with metdata and generates execution plan called DAG where each stage is MRjob, HDFS ops, metastore ops), Optimizer, Execution Engine, Metastore (Metastore is a central repository that stores the metadata information about the structure of tables and partitions, including column and column type information.
-  It also stores information of serializer and deserializer, required for the read/write operation, and HDFS files where data is stored. This metastore is generally a relational database.)
+- Hive services - Hiveserver2, beeline, Hive Driver(receives hql, creates session handles for the query and sends to compiler), 
+  Hive Compiler (comiles, typecheks, parses with metdata and generates execution plan called DAG where each stage is MRjob, HDFS ops, metastore ops), Optimizer, Execution Engine, 
+  Metastore (Metastore is a central repository that stores the metadata information about the structure of tables and partitions, including column and column type information.
+  It also stores information of serializer and deserializer, required for the read/write operation, and HDFS files where data is stored. 
+  This metastore is generally a relational database.)
 
 - Processing Framework and Resource Management (Hive internally uses a MapReduce framework as a defacto engine for executing the queries.)
 
@@ -50,13 +53,19 @@ Working of Hive:
   
 	Yarn queue mapping..
 	Configure a queue for batch processing
-	You can configure the capacity scheduler queues to scale a Hive batch job for your environment. YARN uses the queues to allocate Hadoop cluster resources among users and groups.
+	You can configure the capacity scheduler queues to scale a Hive batch job for your environment. 
+	YARN uses the queues to allocate Hadoop cluster resources among users and groups.
 
  2) What is managed table and external table in hive:
  
-	Managed tables are Hive owned tables where the entire lifecycle of the tables’ data are managed and controlled by Hive. External tables are tables where Hive has loose coupling with the data.
-	All the write operations to the Managed tables are performed using Hive SQL commands. If a Managed table or partition is dropped, the data and metadata associated with that table or partition are deleted. The transactional semantics (ACID) are also supported only on Managed tables.
-	The writes on External tables can be performed using Hive SQL commands but data files can also be accessed and managed by processes outside of Hive. If an External table or partition is dropped, only the metadata associated with the table or partition is deleted but the underlying data files stay intact. A typical example for External table is to run analytical queries on HBase or Druid owned data via Hive, where data files are written by HBase or Druid and Hive reads them for analytics.
+	Managed tables are Hive owned tables where the entire lifecycle of the tables’ data are managed and controlled by Hive. 
+	External tables are tables where Hive has loose coupling with the data.
+	All the write operations to the Managed tables are performed using Hive SQL commands. 
+	If a Managed table or partition is dropped, the data and metadata associated with that table or partition are deleted. 
+	The transactional semantics (ACID) are also supported only on Managed tables.
+	The writes on External tables can be performed using Hive SQL commands but data files can also be accessed and managed by processes outside of Hive. 
+	If an External table or partition is dropped, only the metadata associated with the table or partition is deleted but the underlying data files stay intact. 
+	A typical example for External table is to run analytical queries on HBase or Druid owned data via Hive, where data files are written by HBase or Druid and Hive reads them for analytics.
 	Hive supports replication of External tables with data to target cluster and it retains all the properties of External tables.
 	The data files permission and ownership are preserved so that the relevant external processes can continue to write in it even after failover. 
 
