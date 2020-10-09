@@ -1,0 +1,68 @@
+
+########################
+HIVE Query execution:
+########################
+
+SQL queries are submitted to Hive and they are executed as follows:
+
+    -- Hive compiles the query.
+
+    -- An execution engine, such as Tez or MapReduce, executes the compiled query.
+
+    -- The resource manager, YARN, allocates resources for applications across the cluster.
+
+    -- The data that the query acts upon resides in HDFS (Hadoop Distributed File System). Supported data formats are ORC, AVRO, Parquet, and text.
+
+    -- Query results are then returned over a JDBC/ODBC connection.
+    
+
+####################
+Hive Architecture
+####################
+
+- Hive Clients
+
+- Hive services - Hiveserver2, beeline, Hive Driver(receives hql, creates session handles for the query and sends to compiler), Hive Compiler (comiles, typecheks, parses with metdata and generates execution plan called DAG where each stage is MRjob, HDFS ops, metastore ops), Optimizer, Execution Engine, Metastore (Metastore is a central repository that stores the metadata information about the structure of tables and partitions, including column and column type information.
+  It also stores information of serializer and deserializer, required for the read/write operation, and HDFS files where data is stored. This metastore is generally a relational database.)
+
+- Processing Framework and Resource Management (Hive internally uses a MapReduce framework as a defacto engine for executing the queries.)
+
+- Distributed Storage (Hive is built on top of Hadoop, so it uses the underlying HDFS)
+
+
+#################
+Working of Hive:
+#################	
+	executeQuery
+	getPlan (driver accepts the query, creates a session handle for the query, and passes the query to the compiler for generating the execution plan.)
+	getMetaData (compiler sends metadeta request to metastore)
+	sendMetaData (metastore sends the metadata to the compiler)
+	sendPlan (compiler then sends the generated execution plan to the driver)
+	executePlan (river sends the execution plan to the execution engine for executing the plan)
+	submit job to MapReduce ()
+  
+  
+ ####################
+ Interview Questions
+ ####################
+ 
+ 1) How to manage multiple hive batch jobs:
+  
+  Yarn queue mapping..
+
+  Configure a queue for batch processing
+
+  You can configure the capacity scheduler queues to scale a Hive batch job for your environment. YARN uses the queues to allocate Hadoop cluster resources among users and groups.
+
+ 2) What is partitionBy and ClusterBy in hive:
+ 
+ 
+ 3) What is managed table and external table in hive: 
+ 
+ 4) How can you change the execution engine of hive:
+ 
+   By setting the property hive.execution.engine = 'Tez' during the local session or setting it up globally we can set our required execution engine.
+ 
+ 
+ 
+ 
