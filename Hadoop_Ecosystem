@@ -1,0 +1,42 @@
+##################
+hadoop ecosystem
+##################
+
+distributed computing
+each node has its own CPU + memory 
+communicate with each other by passing messages
+
+parallel computing
+form of distributed computing
+the distinction is multiple CPUs have access to shared memory
+
+HDFS = data storage
+splits data into 64 or 128 MB chunks 
+stores chunks across a cluster of computers
+
+Hadoop MapReduce = programming model
+MAP
+each map step reads a partition from HDFS
+converts input into key, value pair (aka tuple)
+
+SHUFFLE
+shuffle the kv pairs across the cluster so all keys are on the same node
+
+REDUCE
+compute the final result
+values for a given key are combined
+
+YARN = resource manager 
+schedules jobs across the cluster
+keeps track of compute resources available 
+then assigns those available resources to specific tasks
+task = smallest unit of operation
+
+YARN -- 2 components : 
+Resource Manager(RM) -- Master
+and Node Manager(NM) -- slave
+ 
+NM collects usage infor from respective nodes and send them to RM as part of heartbeat
+RM keeps track of the usage of cluster, we can review it using RM UI
+App time line server is to keep track of YARN apps submitted on cluster
+we can run MR and spark jobs as well using YARN
