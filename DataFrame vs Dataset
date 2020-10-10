@@ -1,0 +1,11 @@
+RDDs and Datasets are type safe means that compiler know the Columns and it's data type of the Column whether it is Long, String, etc....
+
+But, In Dataframe, every time when you call an action, collect() for instance,then it will return the result as an Array of Rows not as Long, String data type. 
+In dataframe, Columns have their own type such as integer, String but they are not exposed to you. To you, its any type.
+
+Spark checks DataFrame type align to those of that are in given schema or not, in run time and not in compile time. 
+It is because elements in DataFrame are of Row type and Row type cannot be parameterized by a type by a compiler in compile time so the compiler cannot check its type. Because of that DataFrame is untyped and it is not type-safe.
+
+Datasets on the other hand check whether types conform to the specification at compile time. That’s why Datasets are type safe.
+
+Now let’s see how type safety affects a spark application developers when they apply lambda expression in filter or map function, querying on non-existing column, and whether these two API’s preserve schema or not when converted back to RDD with coding examples
