@@ -1,0 +1,37 @@
+SparkSession will be created using SparkSession.builder builder patterns.
+
+You can create as many SparkSession objects you want using either SparkSession.builder or SparkSession.newSession.
+
+In order to create SparkSession programmatically (in .py file) in PySpark, you need to use the builder pattern method builder() as explained below. getOrCreate() method returns an already existing SparkSession; if not exists, it creates a new SparkSession.
+
+
+import pyspark
+from pyspark.sql import SparkSession
+spark = SparkSession.builder.master("local[1]") \
+                    .appName('SparkByExamples.com') \
+                    .getOrCreate()
+
+					
+					You can also create a new SparkSession using newSession() method.
+
+
+import pyspark
+from pyspark.sql import SparkSession
+sparkSession3 = SparkSession.newSession
+
+
+
+SparkSession commonly used methods
+
+
+version – Returns Spark version where your application is running, probably the Spark version you cluster is configured with. 
+
+getActiveSession() – returns an active Spark session
+
+sparkContext() – Returns a SparkContext.
+
+sql – Returns a DataFrame after executing the SQL mentioned.
+
+sqlContext() – Returns SQLContext.
+
+stop() – Stop the current SparkContext.
