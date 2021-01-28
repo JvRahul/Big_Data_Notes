@@ -1,0 +1,27 @@
+What makes optimisation possible in dataframes and not in RDD?
+
+Let's understand this through an example:
+
+A social media platform wants to calculate the average number of friends you have, by age.
+
+inputRDD = sc.textFile("/friendsData.csv")
+inputDF = inputRDD.toDF("username", "age", "friends")
+
+
+#RDD way:
+inputRDD
+.map( x => {val fields = x.split(","); (fields(1), fields(2)) })
+.map(x => (x._1, (x._2, 1)))
+.reduceByKey((x,y) => (x._1 + y._1, x._2 + y._2))
+.map( x => (x._1, x._2._1 / x._2._2))
+
+
+#Dataframes way:
+inputDF.groupBy($"age").agg(avg("friends"))
+
+
+---In the RDD approach:
+We are telling the Spark exactly "how-to-do" using Lambdas, which Spark can't optimise. It directly sends those functions to executors to work on the data.
+
+---In the dataframes approach,
+We are using the declarative way of expressing our intention, which tells Spark exactly "what-to-do." This makes optimisation possible in dataframes.
