@@ -1,6 +1,6 @@
 # Big_Data_Notes
 
-Important Concepts surrounding Big Data Technologies:-
+Important around surrounding Big Data Technologies:-
 Hadoop: HDFS, Hive;
 Spark: Python, Scala;
 Kafka;
