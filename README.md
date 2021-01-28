@@ -5,4 +5,4 @@ Hadoop: HDFS, Hive;
 Spark: Python, Scala;
 Kafka;
 HBase;
-Oracle
+SQL: Oracle
