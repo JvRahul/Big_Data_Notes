@@ -1,0 +1,32 @@
+Hive Optimization Technique
+It can be broadly classified into below categories
+1. Table Design And File Format
+--Partitioning
+--Bucketing
+--ORC File format or Parquet File Format
+
+2. Optimization of query
+-- Join Optimization
+--- Map Side Join
+--- Bucket Map Join
+--- Sort Merge Join
+-- Use of windows function to do complicated queries
+
+3. Engine used for running hive
+Tez or Spark enable Hive Engine
+
+4. Use of appropiate compression format like snappy,LZO
+
+5. Use of vectorization
+Limitation :- This can be used only with ORC file format.
+
+properties to set
+set hive.vectorized.execution = true
+set hive.vectorized.execution.enabled = true
+6. Cost Based optimization
+properties to set
+
+set hive.cbo.enable=true;
+set hive.compute.query.using.stats=true;
+set hive.stats.fetch.column.stats=true;
+set hive.stats.fetch.partition.stats=true
