@@ -113,12 +113,16 @@ Working of Hive:
 			
 		# as seen above data is transferred in to 4 buckets _0, _1, _2, _3
  
- 4) What is Sortby, DistributeBy. ClusterBy in hive:
+ 4) What is Orderby, Sortby, DistributeBy. ClusterBy in hive:
  	
+	ORDER BY x: guarantees global ordering, but does this by pushing all data through just one reducer. 
+		    This is basically unacceptable for large datasets. You end up one sorted file as output.
+	
 	SortBy: Sort by clause performs on column names of Hive tables to sort the output.
 		We can mention DESC for sorting the order in descending order and mention ASC for Ascending order of the sort.
 		In this sort by it will sort the rows before feeding to the reducer. Always sort by depends on column types.
-		For instance, if column types are numeric it will sort in numeric order if the columns types are string it will sort in lexicographical order. 
+		For instance, if column types are numeric it will sort in numeric order if the columns types are string it will sort in lexicographical order.
+		SORT BY x: orders data at each of N reducers, but each reducer can receive overlapping ranges of data. You end up with N or more sorted files with overlapping ranges.
 		
 	DistributeBy: Distribute BY clause used on tables present in Hive. Hive uses the columns in Distribute by to distribute the rows among reducers. 
 		All Distribute BY columns will go to the same reducer.
@@ -134,7 +138,11 @@ Working of Hive:
 		But as front end it is an alternative clause for both Sort By and Distribute By.
 		This is actually back end process when we perform a query with sort by, group by, and cluster by in terms of Map reduce framework.
 		So if we want to store results into multiple reducers, we go with Cluster By. 
-
+		
+		CLUSTER BY x: ensures each of N reducers gets non-overlapping ranges, then sorts by those ranges at the reducers. 
+		This gives you global ordering, and is the same as doing (DISTRIBUTE BY x and SORT BY x). You end up with N or more sorted files with non-overlapping ranges.
+		
+		So CLUSTER BY is basically the more scalable version of ORDER BY.
 
  5) How can you change the execution engine of hive:
  
