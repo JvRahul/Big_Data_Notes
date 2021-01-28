@@ -1,0 +1,57 @@
+Pros, Cons & Use Cases of various file formats.
+
+[Sharing an interesting article by Ronald Jose]
+
+#------------------Avro---------------------
+
+Pros
+=> Avro is row based and can be processed by C, C#, Java, Python etc. since its a language neutral data serialization format and Stores schema in JSON format.
+=> Provides robust support for schema evolution i.e. schema's changes over time eg:- adding columns.
+=> Compact and efficient since data is in binary format.
+=> Easy and fast data serialization and deserialization, which can provide very good ingestion performance;
+
+Cons
+=> Slower serialization
+=> Its data is not human-readable;
+=> Not integrated into every programming language.
+
+Use Cases
+=> Ideal for storing data in landing zone of application.
+
+#--------------------ORC---------------------
+
+Pros
+=> Columnar format optimized for read-heavy analytical workloads
+=> Hive complex data type support eg:- Struct, list & map and compatible on HQL
+=> Very high compression rates
+
+    Efficient compression: Stored as columns and compressed, which leads to smaller disk reads. The columnar format is also ideal for vectorization optimizations in Tez.
+
+    Fast reads: ORC has a built-in index, min/max values, and other aggregates that cause entire stripes to be skipped during reads. In addition, predicate pushdown pushes filters into reads so that minimal rows are read. And Bloom filters further reduce the number of rows that are returned.
+
+    Proven in large-scale deployments: Facebook uses the ORC file format for a 300+ PB deployment.
+
+Cons
+=> Increases CPU overhead by increasing the time it takes to decompress the relational data
+
+Use Cases
+=> Ideal for using with hive
+
+#-----------------------Parquet-------------------------
+
+Pros
+=> Self describing Columnar format best suited for storing nested data structures
+=> Parquet is a columnar format. Only the required columns will be retrieved/read, this reduces disk I/O. The concept is called projection pushdown;
+=> Efficient data compression and encoding schemes with enhanced performance to handle complex data
+
+Cons
+=> Doesn’t have built in support for tools other than Spark
+=> It does not support data modification (Parquet files are immutable) and scheme evolution.
+   Of course, Spark knows how to combine the schema if you change it over time (you must specify a special option while reading), 
+   but you can only change something in an existing file by overwriting it.
+
+Use Cases
+=> Ideal for using with interactive and serverless technologies like AWS Athena, Google BigQuery etc.
+=> Parquet is well suited for data storage solutions where aggregation on a particular column over a huge set of data is required;
+
+Vectorization is enabled for parquet in spark and for orc in hive.
