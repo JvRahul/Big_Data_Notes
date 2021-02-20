@@ -1,4 +1,6 @@
 Hive Optimization Technique
+
+Mapper side join queries are taking too long.... use ORC file predicate pushdown...use vectorization...use partition based joins like use where to filter the data as much as possible..
 It can be broadly classified into below categories
 1. Table Design And File Format
 --Partitioning
